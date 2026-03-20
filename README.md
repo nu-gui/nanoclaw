@@ -222,6 +222,8 @@ This keeps the base system minimal and lets every user customize their installat
 
 Questions? Ideas? [Join the Discord](https://discord.gg/VDdww8qS42).
 
+<!-- Deployment note: live runtime is deployed separately under /opt/ai-stack/nanoclaw. -->
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for breaking changes and migration notes.
