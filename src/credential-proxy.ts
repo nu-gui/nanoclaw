@@ -49,6 +49,10 @@ export function startCredentialProxy(
       const chunks: Buffer[] = [];
       req.on('data', (c) => chunks.push(c));
       req.on('end', () => {
+        logger.info(
+          { method: req.method, url: req.url, upstream: upstreamUrl.origin },
+          'Credential proxy forwarding request',
+        );
         const body = Buffer.concat(chunks);
         const headers: Record<string, string | number | string[] | undefined> =
           {
