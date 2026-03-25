@@ -641,8 +641,12 @@ async function main(): Promise<void> {
     await channel.connect();
   }
   if (channels.length === 0) {
-    logger.fatal('No channels connected');
-    process.exit(1);
+    if (process.env.NANOCLAW_HEADLESS === 'true') {
+      logger.warn('No channels connected; continuing in headless mode');
+    } else {
+      logger.fatal('No channels connected');
+      process.exit(1);
+    }
   }
 
   // Start subsystems (independently of connection handler)
@@ -653,6 +657,7 @@ async function main(): Promise<void> {
     onProcess: (groupJid, proc, containerName, groupFolder) =>
       queue.registerProcess(groupJid, proc, containerName, groupFolder),
     sendMessage: async (jid, rawText) => {
+      if (channels.length === 0) return;
       const channel = findChannel(channels, jid);
       if (!channel) {
         logger.warn({ jid }, 'No channel owns JID, cannot send message');
@@ -664,6 +669,7 @@ async function main(): Promise<void> {
   });
   startIpcWatcher({
     sendMessage: (jid, text) => {
+      if (channels.length === 0) return Promise.resolve();
       const channel = findChannel(channels, jid);
       if (!channel) throw new Error(`No channel for JID: ${jid}`);
       return channel.sendMessage(jid, text);
